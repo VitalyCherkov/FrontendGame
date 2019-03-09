@@ -43,11 +43,21 @@ class Kek extends React.Component {
   state = {
     outerText: 0,
     title: 'Hello world',
+    inputVal: '',
+    focus: false,
   };
 
   handleOuterClick = () => {
-    this.setState({ title: this.state.title === 'Hello world' ? '---' : 'Hello world' });
+    this.setState({title: this.state.title === 'Hello world' ? '---' : 'Hello world' });
   };
+
+  handleChangeValue = (e) => {
+    this.setState({ inputVal: e.target.value });
+    console.log(e);
+  };
+
+  setFocus = () => this.setState({ focus: true });
+  setBlur = () => this.setState({ focus: false });
 
   render() {
     console.log('render lol', this.state);
@@ -56,6 +66,13 @@ class Kek extends React.Component {
         <div>
           <Lol aaa='bbb' onClick={(text) => this.setState({ outerText: text })} title={this.state.title} />
           <button onClick={this.handleOuterClick}>{`outer ${this.state.outerText}`}</button>
+          <input
+              value={this.state.inputVal}
+              onChange={this.handleChangeValue}
+              onFocus={this.setFocus}
+              onBlur={this.setBlur}
+          />
+          { this.state.focus ? 'FOCUS' : 'BLUR' }
         </div>
     );
   }
