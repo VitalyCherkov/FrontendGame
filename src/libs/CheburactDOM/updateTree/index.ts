@@ -100,7 +100,8 @@ export default function updateTree(
       const nextFiber = updateOrCreateFiberWithElement($target, fiber, el as IElement);
       if (nextFiber) {
         nextChildren.push(nextFiber);
-        if (nextFiber.type !== FiberTypes.COMPONENT && nextFiber.ref) {
+        if (!fiber && nextFiber.type !== FiberTypes.COMPONENT && nextFiber.ref) {
+          console.log('append:', nextFiber);
           $target.appendChild(nextFiber.ref);
         }
       }
