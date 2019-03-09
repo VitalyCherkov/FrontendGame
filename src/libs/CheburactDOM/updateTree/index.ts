@@ -1,5 +1,5 @@
 import { IComponent, IElement, IVirtualNode } from 'libs/Cheburact/types';
-import { IRootContext, getTreeBuilder } from '../utils';
+import { getTreeBuilder, IRootContext } from '../utils';
 import { FiberTypes, IFiberNode, UpdateQueueItem } from '../types';
 
 import eraseEqualFiberCollectionItem from './eraseEqualFiberCollectionItem';
@@ -26,20 +26,16 @@ export default function updateTree(
       fiber: IFiberNode | null,
       element: IElement,
   ): IFiberNode | null => {
-    if (!fiber) {
-      if (!rootContext.updater) {
-        return null;
-      }
+    if (!rootContext.updater || fiber && !fiber.ref && fiber.type !== FiberTypes.COMPONENT) {
+      return null;
+    }
 
+    if (!fiber) {
       const builtTree = getTreeBuilder(rootContext)($target, element);
       if (!builtTree || builtTree.length === 0) {
         return null;
       }
       return builtTree[ 0 ];
-    }
-
-    if (!fiber.ref && fiber.type !== FiberTypes.COMPONENT) {
-      return null;
     }
 
     if (fiber.type === FiberTypes.STRING) {
