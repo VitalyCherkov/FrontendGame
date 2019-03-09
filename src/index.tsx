@@ -7,6 +7,10 @@ class Lol extends React.Component {
     text: 0,
   };
 
+  componentDidUpdate() {
+    console.log('Lol updated');
+  }
+
   handleSetHeaderRef = (ref: HTMLElement) =>
       this.headerRef = ref;
 

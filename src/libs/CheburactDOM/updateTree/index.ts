@@ -60,8 +60,11 @@ export default function updateTree(
       const nextComp = element as IComponent;
 
       const { nextState } = findItemInUpdateQueue(prevComp, updateQueue) || {};
+
       prevComp.writeState({ ...prevComp.getState(), ...(nextState || {}) });
+      const prevProps = prevComp.getProps();
       prevComp['props'] = nextComp.getProps();
+      prevComp.componentDidUpdate(prevProps);
 
       let renderedTree: any = prevComp.render();
       if (!Array.isArray(renderedTree)) {
@@ -81,8 +84,7 @@ export default function updateTree(
       elements: Array<IElement>,
   ): Array<IFiberNode> => {
     const collection = spreadFibersByType(fibers);
-    const itemsToUpdate: Array<[FiberCollectionItem | null, IElement]>
-        = elements.map((el: IElement) => ([
+    const itemsToUpdate = elements.map((el) => ([
       eraseEqualFiberCollectionItem(collection, el),
       el,
     ]));
@@ -95,7 +97,7 @@ export default function updateTree(
     const nextChildren: Array<IFiberNode> = [];
     itemsToUpdate.forEach(([item, el]) => {
       const { fiber } = (item || { fiber: null });
-      const nextFiber = updateOrCreateFiberWithElement($target, fiber, el);
+      const nextFiber = updateOrCreateFiberWithElement($target, fiber, el as IElement);
       if (nextFiber) {
         nextChildren.push(nextFiber);
         if (nextFiber.type !== FiberTypes.COMPONENT && nextFiber.ref) {
@@ -116,6 +118,7 @@ export default function updateTree(
         if (qItem) {
           const element = qItem.fiberNode.stateNode as IComponent;
           element.writeState(qItem.nextState);
+          element.componentDidUpdate(element.getProps());
           let renderedTree: any = element.render();
           if (!Array.isArray(renderedTree)) {
             renderedTree = [renderedTree];

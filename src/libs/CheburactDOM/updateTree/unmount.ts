@@ -3,6 +3,10 @@ import { FiberTypes, IFiberNode } from '../types';
 import { BOUND_EVENT_LISTENERS } from '../config/customFields';
 
 const unmount = (fiber: IFiberNode) => {
+  if (!fiber) {
+    return;
+  }
+
   for (let child of fiber.children) {
     unmount(child);
   }
